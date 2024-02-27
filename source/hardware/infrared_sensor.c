@@ -23,17 +23,20 @@ void infrared_init() {
     infraredStr.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_6;
     GPIO_Init(GPIOA, &infraredStr);
 
-
 }
 
+/**
+ * @brief 读取红外传感器状态，并根据不同情况更新运行状态值。
+ */
 void infrared_tell() {
-//    NEAR_SEN = GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0);
-//    CLP_SEN = GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1);
+    // NEAR_SEN = GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0);
+    // CLP_SEN = GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1);
     R_SEN = GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_0);
     MR_SEN = GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_1);
     M_SEN = GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_4);
     ML_SEN = GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_5);
     L_SEN = GPIO_ReadInputDataBit(GPIOA, GPIO_Pin_6);
+
     if (Perfect_Normal_Running || Normal_Running) { running_status = 50; }
     else if (Slight_Left_Deviation) { running_status = 65; }
     else if (Slight_Right_Deviation) { running_status = 35; }

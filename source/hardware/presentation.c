@@ -42,21 +42,23 @@ void mode_exchange() {
     static u8 mode;  // 保持 mode 在函数调用之间的状态
     static u8 cursor_site;  // 保持 cursor_site 在函数调用之间的状态
     static u8 initialized = 0;  // 静态标志，标记是否已经初始化过
-    static u8 mode_clear_f = 0;
+    static u8 mode_clear_f = 0; //清屏标志
     int key_status;
 
-    key_status = Key_get();
+    key_status = Key_get();  // 获取按键状态
+
     if (!initialized) {
-        // 在第一次调用时初始化 mode = 1和 cursor_site = 0
+        // 在第一次调用时初始化 mode = 1 和 cursor_site = 0
         init_mode_cursor(&mode, &cursor_site);
         initialized = 1;
     }
 
-    site_init();
-    pid_para_trans(&pid_show_speed_L, &pid_speed_L_para);
-    pid_para_trans(&pid_show_infrared, &pid_infrared_para);
+    site_init();  // 初始化站点
+    pid_para_trans(&pid_show_speed_L, &pid_speed_L_para);  // 转换左轮速度PID参数
+    pid_para_trans(&pid_show_infrared, &pid_infrared_para);  // 转换红外PID参数
 
     switch (mode) {
+///设置pwm的模式
 //        case 3:
 //            mode_clear(&mode_clear_f);
 //            run = 0;
@@ -77,73 +79,74 @@ void mode_exchange() {
 //            }
 //            break;
         case 1:
-            mode_clear(&mode_clear_f);
-            run = 0;
-            show_infrared_pid();
+            mode_clear(&mode_clear_f);  // 清除模式标志位
+            run = 0;  // 停止运行标志
+            show_infrared_pid();  // 显示红外PID参数
             switch (cursor_site) {
                 case 1:
-                    handle_mode1(base_speed, site.base_speed_line, site.base_speed_column);
-                    base_speed = encoder_get_cursor() / 10;
+                    handle_mode1(base_speed, site.base_speed_line, site.base_speed_column);  // 处理模式1光标闪烁
+                    base_speed = encoder_get_cursor() / 10;  // 设置基础速度
                     break;
                 case 2:
-                    handle_kp_Default(pid_show_infrared);
-                    pid_infrared_para.kp = (float) (encoder_get_cursor() / 100.0);
+                    handle_kp_Default(pid_show_infrared);  // 处理红外PID的kp参数
+                    pid_infrared_para.kp = (float) (encoder_get_cursor() / 100.0);  // 设置红外PID的kp参数
                     break;
                 case 3:
-                    handle_kd_Default(pid_show_infrared);
-                    pid_infrared_para.kd = (float) (encoder_get_cursor() / 100.0);
+                    handle_kd_Default(pid_show_infrared);  // 处理红外PID的kd参数
+                    pid_infrared_para.kd = (float) (encoder_get_cursor() / 100.0);  // 设置红外PID的kd参数
                     break;
                 case 4:
-                    handle_ki_Default(pid_show_infrared);
-                    pid_infrared_para.ki = (float) (encoder_get_cursor() / 1000.0);
+                    handle_ki_Default(pid_show_infrared);  // 处理红外PID的ki参数
+                    pid_infrared_para.ki = (float) (encoder_get_cursor() / 1000.0);  // 设置红外PID的ki参数
                     break;
                 default:
-                    cursor_site = 0;
+                    cursor_site = 0;  // 光标位置复位
             }
             break;
         case 2:
-            mode_clear(&mode_clear_f);
-            run = 0;
-            show_L_speed_pid();
+            mode_clear(&mode_clear_f);  // 清除模式标志位
+            run = 0;  // 停止运行
+            show_L_speed_pid();  // 显示左轮速度PID参数
             switch (cursor_site) {
                 case 1:
-                    handle_kp_Default(pid_show_speed_L);
-                    pid_speed_L_para.kp = (float) (encoder_get_cursor() / 100.0);
+                    handle_kp_Default(pid_show_speed_L);  // 处理左轮速度PID的kp参数
+                    pid_speed_L_para.kp = (float) (encoder_get_cursor() / 100.0);  // 设置左轮速度PID的kp参数
                     break;
                 case 2:
-                    handle_kd_Default(pid_show_speed_L);
-                    pid_speed_L_para.kd = (float) (encoder_get_cursor() / 100.0);
+                    handle_kd_Default(pid_show_speed_L);  // 处理左轮速度PID的kd参数
+                    pid_speed_L_para.kd = (float) (encoder_get_cursor() / 100.0);  // 设置左轮速度PID的kd参数
                     break;
                 case 3:
-                    handle_ki_Default(pid_show_speed_L);
-                    pid_speed_L_para.ki = (float) (encoder_get_cursor() / 1000.0);
+                    handle_ki_Default(pid_show_speed_L);  // 处理左轮速度PID的ki参数
+                    pid_speed_L_para.ki = (float) (encoder_get_cursor() / 1000.0);  // 设置左轮速度PID的ki参数
                     break;
                 default:
-                    cursor_site = 0;
+                    cursor_site = 0;  // 光标位置复位
             }
             break;
 
         default:
-            PWM_SET_left(pwm_show.pwm_L);
-            PWM_SET_right(pwm_show.pwm_R);
-            mode_clear(&mode_clear_f);
-            OLED_ShowString(4, 5, "RUN");
-            mode = 1;
-            run = 1;
-            mode_clear_f = 0;
+            PWM_SET_left(pwm_show.pwm_L);  // 设置左轮PWM
+            PWM_SET_right(pwm_show.pwm_R);  // 设置右轮PWM
+            mode_clear(&mode_clear_f);  // 清除模式标志位
+            OLED_ShowString(4, 5, "RUN");  // 在OLED上显示"RUN"
+            mode = 1;  // 模式设为1
+            run = 1;  // 开始运行
+            mode_clear_f = 0;  // 清除模式标志位
     }
 
     if (key_status == 1) {
-        mode += 1;
-        mode_clear_f = 0;
-        cursor_site = 0;
+        mode += 1;  // 模式加1
+        mode_clear_f = 0;  // 清除模式标志位
+        cursor_site = 0;  // 光标位置复位
     }
     if (key_status == 2) {
-        cursor_site += 1;
-        count = 0;
-        maintain_show_val(&mode, &cursor_site);
+        cursor_site += 1;  // 光标位置加1
+        count = 0;  // 计数清零
+        maintain_show_val(&mode, &cursor_site);  // 继承显示数值方便后续改进参数
     }
 }
+
 
 ///@brief 模式和光标初始化
 void init_mode_cursor(u8 *mode, u8 *cursor_site) {
@@ -254,7 +257,7 @@ static void sub_pwm_show(u16 pwm_L_or_R_value, u8 line, u8 column) {
  * @param line OLED显示的行
  * @param column OLED显示的列
  * @note 此函数依赖外部定义的计数器u8 count。
- * @note 只闪烁3次防止delay阻塞程序
+ * @note 只闪烁2次防止delay阻塞程序
  */
 static void handle_mode3(u16 pwm_L_or_R_value, u8 line, u8 column) {
     if (count > 1) {
@@ -278,6 +281,7 @@ static void handle_mode3_R_Default() {
     handle_mode3(pwm_show.pwm_R, site.pwm_R_line, site.pwm_R_column);
 }
 
+///@brief 参照show_pwm
 void show_L_speed_pid() {
     OLED_ShowString(1, 1, "L_speed_pid");
 
@@ -291,7 +295,10 @@ void show_L_speed_pid() {
     sub_pid_show(pid_show_speed_L.ki, site.ki_line, site.ki_column, Yes);
 }
 
-
+/**
+ * @brief 参照sub_pwm_show
+ * @note 区别了kp、kd和ki两种显示格式
+ */
 static void sub_pid_show(u16 pid_show_value, u8 line, u8 column, u8 is_ki) {
     uint8_t percentile, decile;
     if (is_ki) {
@@ -320,7 +327,9 @@ static void sub_pid_show(u16 pid_show_value, u8 line, u8 column, u8 is_ki) {
     }
 }
 
-
+/**
+ * @brief 参照handle_mode3
+ */
 static void handle_mode2(u16 pid_para_value, u8 line, u8 column, u8 is_ki) {
     if (count > 1) {
         sub_pid_show(pid_para_value, line, column, is_ki);

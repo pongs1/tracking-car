@@ -189,3 +189,8 @@ infrared_sensor.c文件包含红外传感器数据处理和映射逻辑，用于
         else if (Circle) { if (L_SEN == 0) { running_status = 30; } else { running_status = 70; }}
         else if (Stop) { running_status = 0; }
     }
+# 视频结果演示
+
+
+https://github.com/pongs1/tracking-car/assets/136407173/6d4a21f9-3d1f-4918-98d6-19622a534aca
+

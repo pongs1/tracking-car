@@ -22,7 +22,7 @@ source中的i2c和mpu6050在本项目中未使用原本想姿态解算的，但�
 
 在main.c文件中
    
-    while (1) {   While (1) {
+    while (1) {  
         if (!run) { // 如果小车不在运行状态
             motor_init_flg = 0; // 重置电机初始化标志位
             mode_exchange(); // 切换模式

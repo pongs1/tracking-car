@@ -71,6 +71,8 @@ extern float encoder_rotations_R;
 extern PidTypeDef pid_speed_R_para;
 float encoder_angular_speed_R;
 
+int8_t stop = 0;
+
 /**
  * @note 更新encoder_angular_speed
  * @note 计时
@@ -87,7 +89,8 @@ void TIM2_IRQHandler() {
             encoder_rotations_R = (float) encoder_get_right() / 2496;
             encoder_angular_speed_R = encoder_rotations_R * 25 * 60;
             //
-            infrared_tell();//判断并读取现在位置
+            if (!stop)
+                infrared_tell();//判断并读取现在位置
             //
             num++;
             TIM_SetCounter(TIM3, 0);

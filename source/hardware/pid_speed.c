@@ -8,12 +8,12 @@ float encoder_rotations_L;
 extern float encoder_angular_speed_L;
 float encoder_rotations_R;
 extern float encoder_angular_speed_R;
-u16 base_speed = 20;
+u16 base_speed = 75;
 
 ///在pid_speed.h里定义
 PidTypeDef pid_speed_L_para = {3.00f, 1.40f, 0.111f};
 PidTypeDef pid_speed_R_para = {3.00f, 1.40f, 0.112f};
-PidTypeDef pid_infrared_para = {1, 0, 0};
+PidTypeDef pid_infrared_para = {4.50f, 0.40f, 0};
 
 /**
  * @brief 根据PID控制器的参数和当前的编码器角速度计算PID控制器的输出值。
@@ -126,12 +126,15 @@ int16_t pid_turn_cal(PidTypeDef *PidInfrared) {
     return pid_output;
 }
 
+extern int8_t stop;
+
 void pid_turn() {
     int16_t pid_output = pid_turn_cal(&pid_infrared_para);
     int speed = base_speed;
     if (running_status == 0) {
         speed_set(&pid_speed_L_para, 0);
         speed_set(&pid_speed_R_para, 0);
+        stop = 1;
     } else if (pid_output > -5 && pid_output < 5) {
         speed_set(&pid_speed_L_para, speed);
         speed_set(&pid_speed_R_para, speed);

@@ -85,7 +85,7 @@ void mode_exchange() {
             switch (cursor_site) {
                 case 1:
                     handle_mode1(base_speed, site.base_speed_line, site.base_speed_column);  // 处理模式1光标闪烁
-                    base_speed = encoder_get_cursor() / 10;  // 设置基础速度
+                    base_speed = encoder_get_cursor() / 8;  // 设置基础速度
                     break;
                 case 2:
                     handle_kp_Default(pid_show_infrared);  // 处理红外PID的kp参数
@@ -210,7 +210,7 @@ void maintain_show_val(const u8 *mode, const u8 *cursor_site) {
 
     switch (*cursor_site) {
         case 1:
-            TIM2->CNT = base_speed * 10;
+            TIM2->CNT = base_speed * 8;
             break;
         case 2:
             TIM2->CNT = pid_show->kp;
